@@ -5,10 +5,10 @@ using UnityEngine;
 public class GenerateBlocks : MonoBehaviour {
 
     public GameObject block;
+    public const float xCoord = -4f;
 
     // Use this for initialization
     void Start () {
-        float xCoord = -4f;
         float yCoord = 0f;
 
         int noBlocksPerColumn = 9;
