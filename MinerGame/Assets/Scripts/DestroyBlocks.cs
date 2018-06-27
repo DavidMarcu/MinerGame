@@ -11,6 +11,17 @@ public class DestroyBlocks : MonoBehaviour
     private Ray ray;
     private RaycastHit raycastHit;
 
+    private Vector3 newPosition;
+    
+    public float animationTime = 3f;
+    private float currentTime;
+    private bool ableToMove = false;
+
+    private void Start()
+    {
+        newPosition = player.transform.position;
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -22,23 +33,42 @@ public class DestroyBlocks : MonoBehaviour
             {
                 //Debug.Log(raycastHit.transform.position);
                 Destroy(raycastHit.transform.gameObject);
-
-                moveThePlayer();
+                setNewPositionToThePlayer();
+                //ableToMove = true;
+                //currentTime = Time.time;
             }
         }
+
+        moveThePlayer();
     }
 
     void moveThePlayer()
     {
+        // && (Time.time < (currentTime + animationTime))
+        //if (ableToMove)
+        //{
+            player.transform.position = Vector3.MoveTowards(player.transform.position, newPosition, Time.deltaTime * animationTime);
+        //}
+        /*else
+        {
+            ableToMove = false;
+            player.transform.position = newPosition;
+        }*/
+        //Debug.Log(Mathf.Sin(Time.time));
+    }
+
+    void setNewPositionToThePlayer()
+    {
         if(cubeIsSidewaysThePlayer())
         {
-            player.transform.position = new Vector3(raycastHit.transform.position.x, player.transform.position.y, player.transform.position.z);
+            newPosition = new Vector3(raycastHit.transform.position.x, player.transform.position.y, player.transform.position.z);
+            //player.transform.position = Vector3.Lerp(player.transform.position, newPosition, Time.deltaTime*lerpSpeed);
         }
 
         if(cubeIsUnderThePlayer())
         {
-            player.transform.position += Vector3.down;
-            gameCamera.transform.position += Vector3.down;
+            newPosition = player.transform.position + Vector3.down;
+            //gameCamera.transform.position += Vector3.down;
         }
     }
 
@@ -64,6 +94,7 @@ public class DestroyBlocks : MonoBehaviour
             {
                 if (player.transform.position.x == raycastHit.transform.position.x)
                 {
+                    ShiftLayersUp.shiftLayersUp();
                     return true;
                 }
             }
