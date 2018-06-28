@@ -109,6 +109,7 @@ public class DestroyBlocks : MonoBehaviour
                 {
                     // change blocks positions
                     SetBlocksNewPositions();
+                    InfiniteGererator.allowToGenerate = true; // permitem generarea unui nou layer
                     return true;
                 }
             }

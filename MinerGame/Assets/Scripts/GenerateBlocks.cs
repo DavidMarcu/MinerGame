@@ -12,14 +12,14 @@ public class GenerateBlocks : MonoBehaviour {
         float yCoord = 0f;
 
         int noBlocksPerColumn = 9;
-        int noBlocksPerRow = 14;
+        int noBlocksPerRow = 15;
 
         GenerateBlockLayers(xCoord, yCoord, 0f, noBlocksPerColumn, noBlocksPerRow); // foreground
 
         GenerateBlockLayers(xCoord, yCoord, 1f, noBlocksPerColumn, noBlocksPerRow); // background
     }
 
-    void GenerateBlockLayers(float xCoord, float yCoord, float zCoord, int noBlocksPerColumn, int noBlocksPerRow)
+    public void GenerateBlockLayers(float xCoord, float yCoord, float zCoord, int noBlocksPerColumn, int noBlocksPerRow)
     {
         for (int i = 0; i < noBlocksPerRow; ++i)
         {
