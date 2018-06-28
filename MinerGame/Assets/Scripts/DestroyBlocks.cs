@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class DestroyBlocks : MonoBehaviour
 {
+    private GameObject[] blocks;
+    private Vector3[] newBlockPositions;
+    private float animationTimeBlock = 5f;
 
     public Camera gameCamera;
     public GameObject player;
@@ -13,71 +16,81 @@ public class DestroyBlocks : MonoBehaviour
 
     private Vector3 newPosition;
     
-    public float animationTime = 3f;
-    private float currentTime;
-    private bool ableToMove = false;
+    public float playerSpeed = 3f;
 
     private void Start()
     {
         newPosition = player.transform.position;
-    }
 
-    // Update is called once per frame
+        SetBlockPositions();
+    }
+    
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
             ray = gameCamera.ScreenPointToRay(Input.mousePosition);
 
-            if (Physics.Raycast(ray, out raycastHit) && cubeIsNearThePlayer())
+            if (Physics.Raycast(ray, out raycastHit) && CubeIsNearThePlayer())
             {
-                //Debug.Log(raycastHit.transform.position);
                 Destroy(raycastHit.transform.gameObject);
-                setNewPositionToThePlayer();
-                //ableToMove = true;
-                //currentTime = Time.time;
             }
         }
 
-        moveThePlayer();
+        MoveThePlayer();
+        MoveTheBlocks();
     }
 
-    void moveThePlayer()
+    private void SetBlockPositions()
     {
-        // && (Time.time < (currentTime + animationTime))
-        //if (ableToMove)
-        //{
-            player.transform.position = Vector3.MoveTowards(player.transform.position, newPosition, Time.deltaTime * animationTime);
-        //}
-        /*else
+        blocks = GameObject.FindGameObjectsWithTag("Block");
+        int initialize = blocks.Length;
+        newBlockPositions = new Vector3[initialize];
+        int i = 0;
+        foreach (GameObject block in blocks)
         {
-            ableToMove = false;
-            player.transform.position = newPosition;
-        }*/
-        //Debug.Log(Mathf.Sin(Time.time));
-    }
-
-    void setNewPositionToThePlayer()
-    {
-        if(cubeIsSidewaysThePlayer())
-        {
-            newPosition = new Vector3(raycastHit.transform.position.x, player.transform.position.y, player.transform.position.z);
-            //player.transform.position = Vector3.Lerp(player.transform.position, newPosition, Time.deltaTime*lerpSpeed);
-        }
-
-        if(cubeIsUnderThePlayer())
-        {
-            newPosition = player.transform.position + Vector3.down;
-            //gameCamera.transform.position += Vector3.down;
+            newBlockPositions[i] = block.transform.position;
+            i++;
         }
     }
 
-    bool cubeIsNearThePlayer()
+    private void SetBlocksNewPositions()
+    {
+        blocks = GameObject.FindGameObjectsWithTag("Block");
+        newBlockPositions = null;
+        int initialize = blocks.Length;
+        newBlockPositions = new Vector3[initialize];
+        int i = 0;
+        foreach (GameObject block in blocks)
+        {
+            newBlockPositions[i] = block.transform.position + Vector3.up;
+            i++;
+        }
+    }
+
+    void MoveThePlayer()
+    {
+        player.transform.position = Vector3.MoveTowards(player.transform.position, newPosition, Time.deltaTime * playerSpeed);
+    }
+
+    void MoveTheBlocks()
+    {
+        int i = 0;
+        foreach (GameObject block in blocks)
+        {
+            if (block != null)
+                block.transform.position = Vector3.MoveTowards(block.transform.position, newBlockPositions[i], Time.deltaTime * animationTimeBlock);
+            i++;
+        }
+    }
+   
+
+    bool CubeIsNearThePlayer()
     {
 
         if (player.transform.position.z == raycastHit.transform.position.z)
         {
-            if(cubeIsSidewaysThePlayer() || cubeIsUnderThePlayer())
+            if(CubeIsSidewaysThePlayer() || CubeIsUnderThePlayer())
             {
                 return true;
             }
@@ -86,7 +99,7 @@ public class DestroyBlocks : MonoBehaviour
         return false;
     }
 
-    bool cubeIsUnderThePlayer()
+    bool CubeIsUnderThePlayer()
     {
         if (Mathf.Abs(raycastHit.transform.position.x) != Mathf.Abs(GenerateBlocks.xCoord))
         {
@@ -94,7 +107,8 @@ public class DestroyBlocks : MonoBehaviour
             {
                 if (player.transform.position.x == raycastHit.transform.position.x)
                 {
-                    ShiftLayersUp.shiftLayersUp();
+                    // change blocks positions
+                    SetBlocksNewPositions();
                     return true;
                 }
             }
@@ -103,7 +117,7 @@ public class DestroyBlocks : MonoBehaviour
         return false;
     }
 
-    bool cubeIsSidewaysThePlayer()
+    bool CubeIsSidewaysThePlayer()
     {
         if (Mathf.Abs(raycastHit.transform.position.x) != Mathf.Abs(GenerateBlocks.xCoord))
         {
@@ -111,6 +125,8 @@ public class DestroyBlocks : MonoBehaviour
             {
                 if (Mathf.Abs(player.transform.position.x - raycastHit.transform.position.x) == 1)
                 {
+                    // change the player's position
+                    newPosition = new Vector3(raycastHit.transform.position.x, player.transform.position.y, player.transform.position.z);
                     return true;
                 }
             }

@@ -306,7 +306,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameCamera: {fileID: 282840813}
   player: {fileID: 1785500735}
-  animationTime: 3
+  playerSpeed: 3
 --- !u!1 &1785500735
 GameObject:
   m_ObjectHideFlags: 0
